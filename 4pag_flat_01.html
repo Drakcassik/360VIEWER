@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>4ª Página - Visualizador 3D</title>
+
+  <!-- Seu CSS principal -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Model Viewer (importante para exibir o .glb) -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer"></script>
+
+  <!-- Fontes e outros links (já existentes) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet"
+  />
+</head>
+
+<body>
+  <!-- HEADER fixo, igual às outras páginas -->
+  <header class="header">
+    <section>
+      <a href="Index.html" class="Logo">
+        <img src="BOKETTO_LOGO.png" alt="Logo">
+      </a>
+      <nav class="navbar">
+        <a href="#home">Customize your hat and see augmented reality.</a>
+      </nav>
+      <div class="icons">
+        <img width="60" height="60"
+             src="https://img.icons8.com/ios-filled/60/360-view--v3.png"
+             alt="360-view--v3"/>
+      </div>
+    </section>
+  </header>
+
+  <!-- Botão "Voltar" no canto inferior esquerdo -->
+  <div class="back-button">
+    <a href="3pag_360_brim_flat.html" class="btn-back">Voltar</a>
+  </div>
+
+  <!-- CONTAINER DA PÁGINA 4 (grande quadrado à esquerda e quadrado menor à direita) -->
+  <div class="page4-container">
+    
+    <!-- Quadrado maior: Visualizador 3D -->
+    <div class="viewer-box">
+      <model-viewer id="viewer"
+        src="https://www.dl.dropboxusercontent.com/s/efkl62wyy9aiyny/HAT_FLAT_BEADED.glb?raw=1"
+        ar
+        auto-rotate
+        camera-controls
+        shadow-intensity="1"
+        exposure="1"
+        environment-image="neutral"
+        interaction-prompt="none"
+        alt="Chapéu 3D"
+      >
+      </model-viewer>
+    </div>
+
+    <!-- Quadrado menor: Menu lateral -->
+    <div class="menu-box">
+      <h3>Variants</h3>
+      <select id="variant-picker" onchange="changeVariant()" aria-label="Variant Picker">
+        <option value="">Selecione uma variante...</option>
+      </select>
+
+      <h3>Menu</h3>
+      <div class="buttons">
+        <button onclick="loadModel('https://www.dl.dropboxusercontent.com/s/sxax7vfqmvf75yd/HAT_FLAT_BELT.glb?raw=1')">
+          Flat Belt
+        </button>
+        <button onclick="loadModel('https://www.dl.dropboxusercontent.com/s/gs9ai7j6k4zwavd/HAT_FLAT_METAL.glb?raw=1')">
+          Flat Metal
+        </button>
+        <button onclick="loadModel('https://www.dl.dropboxusercontent.com/s/efkl62wyy9aiyny/HAT_FLAT_BEADED.glb?raw=1')">
+          Flat Beaded
+        </button>
+        <button onclick="loadModel('https://www.dl.dropboxusercontent.com/s/2tqh7f7hcovspkw/HAT_FOLDED_BELT.glb?raw=1')">
+          Folded Belt
+        </button>
+        <button onclick="loadModel('https://www.dl.dropboxusercontent.com/s/7r9rjuedi527p58/HAT_FOLDED_METAL.glb?raw=1')">
+          Folded Metal
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script JS para trocar variantes e modelos -->
+  <script>
+    const viewer = document.getElementById('viewer');
+    const variantPicker = document.getElementById('variant-picker');
+
+    async function updateVariantList() {
+      variantPicker.innerHTML = "";
+      const variants = await viewer.availableVariants;
+      
+      if (variants.length > 0) {
+        variants.forEach(variant => {
+          let option = document.createElement("option");
+          option.value = variant;
+          option.textContent = variant;
+          variantPicker.appendChild(option);
+        });
+      } else {
+        let option = document.createElement("option");
+        option.value = "";
+        option.textContent = "Nenhuma variante disponível";
+        variantPicker.appendChild(option);
+      }
+    }
+
+    function changeVariant() {
+      const selectedVariant = variantPicker.value;
+      if (selectedVariant) {
+        viewer.variantName = selectedVariant;
+      }
+    }
+
+    function loadModel(url) {
+      viewer.setAttribute('src', url);
+      // Atualiza a lista de variantes assim que o modelo terminar de carregar
+      viewer.addEventListener('load', async () => {
+        await updateVariantList();
+      }, { once: true });
+    }
+
+    // Atualiza a lista de variantes quando a página carrega
+    window.addEventListener('DOMContentLoaded', () => {
+      updateVariantList();
+    });
+  </script>
+</body>
+</html>
